@@ -14,3 +14,7 @@ You need Python installed on your machine. The project is tested with Python 3.9
 ### Installing
 
 Please execute the following command to install all the required packages: pip install -r requirements.txt.
+
+### Running the Program 
+
+You have the option to execute the Assignment_3.py script either from the terminal or any other programming environment.
