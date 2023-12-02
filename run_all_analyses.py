@@ -104,9 +104,11 @@ def plot_histogram_comparison(data1, data2, xlabel, ylabel, title, color1=EN_COL
     plt.figure(figsize=(12, 6))
     plt.hist(data1, bins=20, color=color1, edgecolor='black', alpha=0.75, label=label1)
     plt.hist(data2, bins=20, color=color2, edgecolor='black', alpha=0.75, label=label2)
-    plt.xlabel(xlabel)
-    plt.ylabel(ylabel)
+    plt.xlabel(xlabel, fontsize=16)
+    plt.ylabel(ylabel, fontsize=16)
     plt.title(title)
+    plt.xticks(fontsize=14) 
+    plt.yticks(fontsize=14)
     plt.legend()
     plt.show()
 
@@ -126,7 +128,9 @@ def plot_comparison(data1, data2, labels, ylabel, title):
         axes[i].set_ylabel(ylabel)  
         axes[i].set_title(f'{label} Comparison') 
     plt.suptitle(title)
-    plt.tight_layout()
+    plt.tight_layout()   
+    plt.xticks(fontsize=14) 
+    plt.yticks(fontsize=14)
     plt.show()
 
 def analyze_sentiment_per_talk(text, pos_words, neg_words):
@@ -177,12 +181,41 @@ def plot_top_words(words_column, color, title=None):
     most_common_words = Counter(all_words).most_common(10)
     reshaped_words = [get_display(arabic_reshaper.reshape(word[0])) for word in most_common_words]
     plt.bar(reshaped_words, [count[1] for count in most_common_words], color=color)
-    plt.xlabel('Words')
-    plt.ylabel('Frequency')
+    plt.xlabel('Words', fontsize=16)
+    plt.ylabel('Frequency', fontsize=16)
     plt.title(title)
+
+    plt.xticks(fontsize=14)
+    plt.xticks(fontsize=14)
     plt.xticks(rotation=45, ha='right')
     plt.show()
 
+def positive_to_negative(en_df_sorted, ar_df_sorted):
+    # Filter English talks with positive sentiment
+    en_positive_talks = en_df_sorted[en_df_sorted['Sentiment'] > 0]
+
+    # Filter Arabic talks with negative sentiment
+    ar_negative_talks = ar_df_sorted[ar_df_sorted['Sentiment'] < 0]
+
+    # Find matching talks in both datasets
+    matched_talks = en_positive_talks.merge(ar_negative_talks, on='TalkId', suffixes=('_en', '_ar'))
+
+    # Plotting the matched talks
+    if not matched_talks.empty:
+        ax = matched_talks.plot(kind='bar', x='TalkId', y=['Sentiment_en', 'Sentiment_ar'], color=[EN_COLOR, AR_COLOR])
+        plt.xlabel('Talk ID')
+        plt.ylabel('Sentiment Score')
+        plt.title('Talks with Positive Sentiment in English and Negative Sentiment in Arabic')
+        
+        # Rotate the x-axis labels and show every nth label
+        n = 5  # Adjust n based on the dataset size and readability
+        for index, label in enumerate(ax.xaxis.get_ticklabels()):
+            if index % n != 0:
+                label.set_visible(False)
+        plt.xticks(rotation=90)
+        plt.show()
+    else:
+        print("No talks found with positive sentiment in English and negative sentiment in Arabic.")
 
 
 
@@ -280,15 +313,28 @@ def main(en_path= None,ar_path= None):
     # plot Negative Words (English)
     plot_top_words(en_df_sorted['Negative_Words'], 'red', 'Top 10 English negative words')
 
+    positive_to_negative(en_df_sorted,ar_df_sorted)
+
 
 if __name__ == "__main__":
 
-    # For train dataset
-    english_path = 'eng/train/train_english.csv'
-    arabic_path = 'ara/train/train_arabic.csv'
-    main(en_path= english_path,ar_path= arabic_path)
+    def run(dataset='train'):
+        dataset_lower = dataset.lower()
+        
+        if dataset_lower not in ["train", "test"]:
+            raise ValueError("Invalid dataset. Please provide 'train' or 'test'.")
 
-    # # For test dataset
-    # english_path_test = 'eng/test/test_english.csv'
-    # arabic_path_test = 'ara/test/test_arabic.csv'
-    # main(en_path= english_path_test,ar_path= arabic_path_test)
+        if dataset_lower == "train":
+            # For train dataset
+            english_path = 'eng/train/train_english.csv'
+            arabic_path = 'ara/train/train_arabic.csv'
+            main(en_path=english_path, ar_path=arabic_path)
+        else:
+            # For test dataset
+            english_path_test = 'eng/test/test_english.csv'
+            arabic_path_test = 'ara/test/test_arabic.csv'
+            main(en_path=english_path_test, ar_path=arabic_path_test)
+
+
+    # run(dataset='train')
+    run(dataset='test')

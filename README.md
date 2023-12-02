@@ -9,8 +9,7 @@ In a world where language and cultural nuances are vital aspects of communicatio
 ## Data Source
 I downloaded the dataset from the official IWSLT 2018 website (https://wit3.fbk.eu/2018-01-b) as part of the Low Resource MT track on TED Talks. 
 After downloading the dataset, I unzipped the folder and extracted only the Arabic and English talks for further analysis saved in original_data folder. 
-From the available talks, I selected a subset consisting of 300 identical talks from both languages for my research purposes.
-
+From the available talks, I selected a subset consisting of 300 identical talks from both languages for my research purposes, splitted to train and test as discussed in Assignment 1
 
 ## Getting Started
 ### Prerequisites
@@ -22,7 +21,7 @@ Please execute the following command to install all the required packages: pip i
 
 ### Running the Analysis 
 Data Preparation: Run get_all_documents.py to prepare the data for analysis.
-Data Analysis: Execute run_all_analyses.py to perform the comparative analysis of the datasets.
+Data Analysis on test set : Execute run_all_analyses.py to perform the comparative analysis of the test datasets. If you want to run on the training dataset you need to give the 'run' function and argument 'train' instead of 'test'
 
 
 ## Acknowledgements and Licensing
